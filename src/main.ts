@@ -8,11 +8,18 @@ const urlApiUser:string = "http://localhost:3000/users";
 const urlApiPost:string = "http://localhost:3000/posts";
 
 const form = document.querySelector("form");
+const formPost = document.querySelector("#formPost");
+
 const lista = document.getElementById("listUser");
 
 let name = document.getElementById("name") as HTMLInputElement;
 let email = document.getElementById("email") as HTMLInputElement;
 let age = document.getElementById("age") as HTMLInputElement;
+
+let title = document.getElementById("title") as HTMLInputElement;
+let content = document.getElementById("content") as HTMLInputElement;
+let selectAuthor = document.getElementById("selectAuthor") as HTMLInputElement;
+
 
 if(urlParams.size > 0){
   console.log(urlParams.toString());
@@ -77,10 +84,67 @@ function addUserApi(newUser: Omit<User,"id">) {
     });
 }
 
-
+function addPostApi(newPost: Omit<Post,"id">) {
+  axios.post<Post>(urlApiPost, newPost)
+    .then((response: AxiosResponse<Post>) => {
+      console.log(response.data.id + " añadido a la api");
+    })
+    .catch((error) => {
+      console.error('Error al crear post:', error);
+    });
+}
 
 function addUser(user: User) {
   let liU = document.createElement("li");
   liU.appendChild(document.createTextNode(`${user.name}:${user.isAdmin}:${user.id}:${user.email}:${user.age}`));
   return liU;
 }
+
+
+/*function filter(userF:Partial<Omit<User,"id">>){
+  return userF;
+}*/
+
+async function getUsersAndPosts(){
+  let array:User[] & Post[] = [];
+
+  const responseUser = await axios.get<User>(urlApiUser);
+  if(responseUser.status >= 200){
+    array.push(responseUser.data);
+  }
+
+  const responsePost = await axios.get<Post>(urlApiPost);
+  if(responsePost.status >= 200){
+    array.push(responsePost.data);
+  }
+
+  return array;
+}
+console.log(await getUsersAndPosts());
+
+async function loadUsersSelect(){
+  const responseUser = await axios.get<User[]>(urlApiUser);
+  if(responseUser.status >= 200){
+    responseUser.data.forEach(user => {
+      let option = new Option(user.name,user.id.toString());
+      selectAuthor.appendChild(option);
+    })
+  }
+}
+
+await loadUsersSelect();
+
+formPost?.addEventListener("submit",(e) => {
+  e.preventDefault();
+
+  if(title.value && content.value && selectAuthor.value){
+    const newPost :Omit<Post,"id"> = {
+      title:title.value,
+      content:content.value,
+      authorId:parseInt(selectAuthor.value),
+    }
+
+    addPostApi(newPost);
+  }
+
+})

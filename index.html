@@ -11,6 +11,7 @@
       <table id="users"></table>
       <ul id="listUser">
       </ul>
+      <h1>Add User</h1>
       <form id="form">
         <div>
           <label for="name">
@@ -29,6 +30,27 @@
         </div>
           <button type="submit">Enviar</button>
       </form>  
+
+      <h1>Add Post</h1>
+      <form id="formPost">
+        <div>
+          <label for="title">
+            Title <input type="text" id="title" required/>      
+          </label>
+        </div>
+        <div>
+          <label for="content">
+            Content <input type="text" id="content" required/>      
+          </label>
+        </div>
+        <div>
+          <label for="age">
+            Author
+            <select id="selectAuthor"></select>      
+          </label>
+        </div>
+          <button type="submit">Enviar</button>
+      </form> 
       </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
